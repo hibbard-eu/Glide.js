@@ -19,6 +19,9 @@
 			// {Bool} Circual play
 			circular: true,
 
+			// {String} Transition type ("slide" or "fade")
+			transition: "slide",
+
 			// {Int} Animation time
 			animationDuration: 500,
 			// {String} Animation easing function
@@ -102,8 +105,10 @@
 
 		// Sidebar
 		this.parent = parent;
+
 		// Initialize
 		this.init();
+
 		// Start autoplay
 		this.play();
 
@@ -218,14 +223,12 @@
 			}
 
 		};
-
 	}
 
 	/**
 	 * Building slider
 	 */
 	Glide.prototype.build = function() {
-
 		/**
 		 * Attatch bindings
 		 */
@@ -240,7 +243,7 @@
 			 * If circular option is true
 			 * Append left and right arrow
 			 */
-			if (this.options.circular) this.circular();
+			//if (this.options.circular) this.circular();
 
 			/**
 			 * Arrows
@@ -261,7 +264,6 @@
 		 * Attatch events
 		 */
 		this.events();
-
 	};
 
 	/**
@@ -280,14 +282,13 @@
 		this.lastClone = this.slides.filter(':last-child').clone().width(this.slides.spread);
 
 		/**
-		 * Append clodes slides to slider wrapper at the beginning and end
+		 * Append cloned slides to slider wrapper at the beginning and end
 		 * Increase wrapper with with values of addional slides
 		 * Clear translate and skip cloned last slide at the beginning
 		 */
 		this.wrapper.append(this.firstClone).prepend(this.lastClone).width( this.parent.width() * (this.slides.length+2) )
 			.trigger('clearTransition')
 				.trigger('setTranslate', [-this.slides.spread]);
-
 	};
 
 	/**
@@ -331,10 +332,9 @@
 				'margin-left': -(this.navigation.wrapper.outerWidth(true)/2)
 			});
 		}
-
 	};
 
-		/**
+	/**
 	 * Building arrows DOM
 	 */
 	Glide.prototype.arrows = function() {
@@ -378,7 +378,6 @@
 			'data-distance': '-1',
 			'html': this.options.arrowLeftText
 		}).appendTo(this.arrows.wrapper);
-
 	};
 
 	/**
@@ -424,7 +423,6 @@
 			}
 
 		});
-
 	};
 
 	/**
@@ -497,7 +495,6 @@
 		$(window).on('resize',
 			$.proxy(this.events.resize, this)
 		);
-
 	};
 
 	/**
@@ -513,7 +510,6 @@
 			// Slide distance specified in data attribute
 			this.slide( $(event.currentTarget).data('distance'), true );
 		}
-
 	};
 
 	/**
@@ -530,7 +526,6 @@
 			// Slide distance specified in data attribute
 			this.slide( $(event.currentTarget).data('distance'), false );
 		}
-
 	};
 
 	/**
@@ -545,7 +540,6 @@
 			// Prev
 			if (event.keyCode === 37) this.slide(-1);
 		}
-
 	};
 
 	/**
@@ -559,7 +553,6 @@
 
 		// When mouse left slider or touch end, start autoplay anew
 		if (event.type === 'mouseout') this.play();
-
 	};
 
 	/**
@@ -573,7 +566,6 @@
 		this.dimensions();
 		// Crop to current slide
 		this.slide(0);
-
 	};
 
 	/**
@@ -605,7 +597,6 @@
 			this.events.touchStartY = touch.pageY;
 			this.events.touchSin = null;
 		}
-
 	};
 
 	/**
@@ -636,7 +627,6 @@
 
 			if ( (this.events.touchSin * (180 / Math.PI)) < 45 ) event.preventDefault();
 		}
-
 	};
 
 	/**
@@ -663,7 +653,6 @@
 				this.slide(1);
 			}
 		}
-
 	};
 
 	/**
@@ -673,7 +662,6 @@
 	 * @param  {function} callback
 	 */
 	Glide.prototype.slide = function(distance, jump, callback) {
-
 		/**
 		 * Stop autoplay
 		 * Clearing timer
@@ -717,20 +705,46 @@
 		 * When fromLast flags is set, set offset to slide width mulled by slides count without cloned slides
 		 * When fromFirst flags is set, set offset to zero
 		 */
-		if (this.options.circular) {
-			offset = offset - this.slides.spread;
-			if (fromLast || fromFirst) this.disableEvents();
-			if (fromLast) offset = this.slides.spread * (slidesLength - 2);
-			if (fromFirst) offset = 0;
-		}
+		// if (this.options.circular) {
+		// 	offset = offset - this.slides.spread;
+		// 	if (fromLast || fromFirst) this.disableEvents();
+		// 	if (fromLast) offset = this.slides.spread * (slidesLength - 2);
+		// 	if (fromFirst) offset = 0;
+		// }
 
 		/**
 		 * Slide change animation
 		 * While CSS3 is supported use offset
 		 * if not, use $.animate();
 		 */
-		if (this.cssSupport) this.wrapper.trigger('setTransition').trigger('setTranslate', [offset]);
-		else this.wrapper.stop().animate({ 'margin-left': offset }, this.options.animationDuration);
+		if(this.options.transitionType === "fade"){
+			var curr = Math.abs(this.currentSlide),
+			    next = curr+1,
+			    prev = curr-1;
+			if(curr >= -slidesLength) next=0;
+			if(prev < 0) prev= -slidesLength;
+			if(jump){
+				console.log("Jumping");
+					$(this.slides[next]).fadeIn(2000);
+					$(this.slides[curr]).fadeOut(500);
+			} else{
+				if(distance === 1){
+					console.log("One forward");
+					$(this.slides[next]).fadeIn(2000);
+					$(this.slides[curr]).fadeOut(500);
+				} else {
+					console.log("One backward");
+					$(this.slides[next]).fadeIn(2000);
+					$(this.slides[curr]).fadeOut(500);
+				}
+			}
+			//if (this.cssSupport) this.wrapper.trigger('setTransition').trigger('setTranslate', [offset]);
+			//else this.wrapper.stop().animate({ 'margin-left': offset }, this.options.animationDuration);
+
+		} else {
+			if (this.cssSupport) this.wrapper.trigger('setTransition').trigger('setTranslate', [offset]);
+			else this.wrapper.stop().animate({ 'margin-left': offset }, this.options.animationDuration);
+		}
 
 		/**
 		 * While circular
@@ -741,34 +755,34 @@
 			 * 	When fromFirst and fromLast flags are set
 			 * 	after animation clear transition and bind events that control slides changing
 			 */
-			if (fromFirst || fromLast) {
-				this.afterAnimation(function(){
-					self.wrapper.trigger('clearTransition');
-					self.enableEvents();
-				});
-			}
+			// if (fromFirst || fromLast) {
+			// 	this.afterAnimation(function(){
+			// 		self.wrapper.trigger('clearTransition');
+			// 		self.enableEvents();
+			// 	});
+			// }
 
 			/**
 			 * When fromLast flag is set
 			 * after animation make immediate jump from cloned slide to proper one
 			 */
-			if (fromLast) {
-				this.afterAnimation(function(){
-					fromLast = false;
-					self.wrapper.trigger('setTranslate', [-self.slides.spread]);
-				});
-			}
+			// if (fromLast) {
+			// 	this.afterAnimation(function(){
+			// 		fromLast = false;
+			// 		self.wrapper.trigger('setTranslate', [-self.slides.spread]);
+			// 	});
+			// }
 
 			/**
 			 * When fromFirst flag is set
 			 * after animation make immediate jump from cloned slide to proper one
 			 */
-			if (fromFirst) {
-				this.afterAnimation(function(){
-					fromFirst = false;
-					self.wrapper.trigger('setTranslate', [self.slides.spread * (slidesLength-1)]);
-				});
-			}
+			// if (fromFirst) {
+			// 	this.afterAnimation(function(){
+			// 		fromFirst = false;
+			// 		self.wrapper.trigger('setTranslate', [self.slides.spread * (slidesLength-1)]);
+			// 	});
+			// }
 
 		}
 
@@ -786,8 +800,8 @@
 
 		// Callbacks after slide change
 		this.afterAnimation(function(){
-			self.options.afterTransition.call(self);
-			if ( (callback !== 'undefined') && (typeof callback === 'function') ) callback();
+			//self.options.afterTransition.call(self);
+			//if ( (callback !== 'undefined') && (typeof callback === 'function') ) callback();
 		});
 
 		/**
@@ -795,7 +809,6 @@
 		 * Setting up timer
 		 */
 		this.play();
-
 	};
 
 	/**
@@ -816,7 +829,6 @@
 				self.slide(1, false);
 			}, this.options.autoplay);
 		}
-
 	};
 
 	/**
@@ -830,7 +842,6 @@
 		 * Clear interial
 		 */
 		if (this.options.autoplay) this.auto = clearInterval(this.auto);
-
 	};
 
 	/**
@@ -843,7 +854,6 @@
 		setTimeout(function(){
 			callback();
 		}, this.options.animationDuration + 10);
-
 	};
 
 	/**
@@ -858,7 +868,6 @@
 		this.wrapper.width(this.slides.spread * (this.slides.length + this.offset));
 		// Set slide width
 		this.slides.add(this.firstClone).add(this.lastClone).width(this.slides.spread);
-
 	};
 
 	/**
@@ -879,7 +888,6 @@
 			this.firstClone.remove();
 			this.lastClone.remove();
 		}
-
 	};
 
 	/**
@@ -889,7 +897,6 @@
 	 * Set animation type
 	 */
 	Glide.prototype.init = function() {
-
 		// Set slides wrapper
 		this.wrapper = this.parent.children();
 		// Set slides
@@ -899,7 +906,6 @@
 
 		// Build DOM
 		this.build();
-
 	};
 
 	/**
@@ -957,11 +963,9 @@
 			)[1] + '-';
 
 		}
-
 	};
 
 	$.fn[name] = function(options) {
-
 		return this.each(function () {
 			if ( !$.data(this, 'api_' + name) ) {
 				$.data(this, 'api_' + name,

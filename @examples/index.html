@@ -25,27 +25,30 @@
 
 		<div class="slider">
 			<ul class="slider__wrapper">
-				<li class="slider__item"><div class="box" style="background-color: #1abc9c;"></div></li>
-				<li class="slider__item"><div class="box" style="background-color: #16a085;"></div></li>
-				<li class="slider__item"><div class="box" style="background-color: #f1c40f;"></div></li>
-				<li class="slider__item"><div class="box" style="background-color: #f39c12;"></div></li>
-				<li class="slider__item"><div class="box" style="background-color: #d35400;"></div></li>
-				<li class="slider__item"><div class="box" style="background-color: #c0392b;"></div></li>
+				<li class="slider__item" style="background-image: url(http://jedrzejchalubek.com/glide/images/bg-fast.jpg); background-size: cover;">1</li>
+				<li class="slider__item" style="background-image: url(http://jedrzejchalubek.com/glide/images/bg-simple.jpg); background-size: cover;">2</li>
+				<li class="slider__item" style="background-image: url(http://jedrzejchalubek.com/glide/images/bg-responsive.jpg); background-size: cover;">3</li>
+				<!---<li class="slider__item"><div class="box" style="background-color: #f39c12;">4</div></li>
+				<li class="slider__item"><div class="box" style="background-color: #d35400;">5</div></li>
+				<li class="slider__item"><div class="box" style="background-color: #c0392b;">6</div></li>--->
 			</ul>
 		</div>
 
 		<script>
-			var glide = $('.slider').glide().data('api_glide');
+       var opts = { transitionType: "fade" },
+			     glide = $('.slider').glide(opts);
 
-			$(window).on('keyup', function (key) {
-				if (key.keyCode === 13) {
-					glide.jump(3, console.log('Wooo!'));
-				};
-			});
+			     //glide = $('.slider').glide(opts).data('api_glide');
 
-			$('.slider__arrows-item').on('click', function() {
-				console.log(glide.current());
-			});
+			// $(window).on('keyup', function (key) {
+			// 	if (key.keyCode === 13) {
+			// 		glide.jump(3, console.log('Wooo!'));
+			// 	};
+			// });
+
+			// $('.slider__arrows-item').on('click', function() {
+			// 	//console.log(glide.current());
+			// });
 		</script>
 	</body>
 </html>

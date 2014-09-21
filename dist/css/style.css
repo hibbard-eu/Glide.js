@@ -4,6 +4,8 @@
   height: 100%;
   overflow: hidden;
 }
+
+
 .slider__wrapper {
   height: 100%;
   list-style: none;
@@ -14,9 +16,16 @@
 }
 .slider__item {
   height: 100%;
-  float: left;
-  clear: none;
+  /*float: left;
+  clear: none;*/
 }
+
+.slider__item:not(:first-child) {
+  display: none;
+}
+
+
+
 .slider__arrows-item {
   position: absolute;
   display: block;
@@ -50,3 +59,5 @@
 .slider__nav-item:hover {
   background: #ccc;
 }
+
+
